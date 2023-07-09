@@ -55,8 +55,8 @@ pipeline {
                     sh '''
                       kubectl config set-context $(kubectl config current-context)
 
-                      envsubst < train-schedule-kube-canary.yml | tee train-schedule-kube-canary.yml
-                      kubectl apply -f train-schedule-kube-canary.yml
+                      envsubst < train-schedule-kube-canary.yml | tee train-schedule-kube-canary-tmp.yml 
+                      kubectl apply -f train-schedule-kube-canary-tmp.yml
                     '''
                 }
             }
@@ -75,11 +75,11 @@ pipeline {
                     sh '''
                       kubectl config set-context $(kubectl config current-context)
 
-                      envsubst < train-schedule-kube-canary.yml | tee train-schedule-kube-canary.yml
-                      kubectl apply -f train-schedule-kube-canary.yml
+                      envsubst < train-schedule-kube-canary.yml | tee train-schedule-kube-canary-tmp.yml
+                      kubectl apply -f train-schedule-kube-canary-tmp.yml
 
-                      envsubst < train-schedule-kube.yml | tee train-schedule-kube.yml
-                      kubectl apply -f train-schedule-kube.yml
+                      envsubst < train-schedule-kube.yml | tee train-schedule-kube-tmp.yml
+                      kubectl apply -f train-schedule-kube-tmp.yml
                     '''
                 }
             }
