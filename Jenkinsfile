@@ -78,7 +78,7 @@ pipeline {
                       envsubst < train-schedule-kube-canary.yml | tee train-schedule-kube-canary.yml
                       kubectl apply -f train-schedule-kube-canary.yml
 
-                      enenvsubst < train-schedule-kube.yml | tee train-schedule-kube.yml
+                      envsubst < train-schedule-kube.yml | tee train-schedule-kube.yml
                       kubectl apply -f train-schedule-kube.yml
                     '''
                 }
