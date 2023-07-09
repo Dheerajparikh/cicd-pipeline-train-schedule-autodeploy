@@ -2,6 +2,7 @@ pipeline {
     agent any
     tools {
         jdk 'jdk8'
+        nodejs 'node9'
         
     }
     environment {
