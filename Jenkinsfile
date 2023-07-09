@@ -51,11 +51,14 @@ pipeline {
                 CANARY_REPLICAS = 1
             }
             steps {
-                kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube-canary.yml',
-                    enableConfigSubstitution: true
-                )
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh '''
+                      kubectl config set-context $(kubectl config current-context)
+
+                      envsubst < train-schedule-kube-canary.yml | tee train-schedule-kube-canary.yml
+                      kubectl apply -f train-schedule-kube-canary.yml
+                    '''
+                }
             }
         }
         stage('DeployToProduction') {
@@ -68,16 +71,17 @@ pipeline {
             steps {
                 input 'Deploy to Production?'
                 milestone(1)
-                kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube-canary.yml',
-                    enableConfigSubstitution: true
-                )
-                kubernetesDeploy(
-                    kubeconfigId: 'kubeconfig',
-                    configs: 'train-schedule-kube.yml',
-                    enableConfigSubstitution: true
-                )
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh '''
+                      kubectl config set-context $(kubectl config current-context)
+
+                      envsubst < train-schedule-kube-canary.yml | tee train-schedule-kube-canary.yml
+                      kubectl apply -f train-schedule-kube-canary.yml
+
+                      enenvsubst < train-schedule-kube.yml | tee train-schedule-kube.yml
+                      kubectl apply -f train-schedule-kube.yml
+                    '''
+                }
             }
         }
     }
